@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+
+  --color-paper: #f4f6f8;
+  --color-ink: #17202a;
+  --color-mute: #596574;
+  --color-line: #d8dfe6;
+  --color-marigold: #f2b01e;
+  --color-marigold-soft: #fff3cf;
+  --color-teal: #0f766e;
+  --color-danger: #b42318;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* notebook dot grid, used on the public site */
+.dotgrid {
+  background-image: radial-gradient(circle, #c9d1da 1px, transparent 1.3px);
+  background-size: 24px 24px;
+}
