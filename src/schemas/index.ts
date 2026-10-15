@@ -39,6 +39,9 @@ export const projectSchema = z.object({
   order: z.number(),
   images: z.array(z.object({ id: z.string(), url: z.string(), caption: z.string().nullable(), order: z.number() })),
   skills: z.array(z.object({ skill: skillSchema })),
+  challenges: z
+    .array(z.object({ id: z.string(), problem: z.string(), solution: z.string(), order: z.number() }))
+    .default([]),
 });
 
 export const profileSchema = z.object({
@@ -50,6 +53,7 @@ export const profileSchema = z.object({
   resumeUrl: z.string().nullable(),
   location: z.string().nullable(),
   contactEmail: z.string().nullable(),
+  phone: z.string().nullable().default(null),
   socialLinks: z.array(z.object({ id: z.string(), platform: z.string(), url: z.string(), order: z.number() })),
 });
 
@@ -61,6 +65,32 @@ export const experienceSchema = z.object({
   location: z.string().nullable(),
   startDate: z.string(),
   endDate: z.string().nullable(),
+  order: z.number(),
+});
+
+export const educationSchema = z.object({
+  id: z.string(),
+  institution: z.string(),
+  degree: z.string(),
+  field: z.string().nullable(),
+  grade: z.string().nullable(),
+  location: z.string().nullable(),
+  startDate: z.string(),
+  endDate: z.string().nullable(),
+  description: z.string().nullable(),
+  order: z.number(),
+});
+
+export const certificateSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  issuer: z.string(),
+  issueDate: z.string(),
+  expiryDate: z.string().nullable(),
+  credentialId: z.string().nullable(),
+  credentialUrl: z.string().nullable(),
+  imageUrl: z.string().nullable(),
+  description: z.string().nullable(),
   order: z.number(),
 });
 
@@ -79,6 +109,8 @@ export type Skill = z.infer<typeof skillSchema>;
 export type Project = z.infer<typeof projectSchema>;
 export type Profile = z.infer<typeof profileSchema>;
 export type Experience = z.infer<typeof experienceSchema>;
+export type Education = z.infer<typeof educationSchema>;
+export type Certificate = z.infer<typeof certificateSchema>;
 export type Message = z.infer<typeof messageSchema>;
 
 /* ---------- form schemas ---------- */
@@ -120,6 +152,12 @@ export const projectFormSchema = z.object({
   published: z.boolean(),
   order: wholeNumber,
   skillIds: z.array(z.string()),
+  challenges: z.array(
+    z.object({
+      problem: requiredText("Describe the problem"),
+      solution: requiredText("Describe how you fixed it"),
+    }),
+  ),
 });
 
 export const skillFormSchema = z.object({
@@ -155,6 +193,10 @@ export const profileFormSchema = z.object({
   bio: requiredText("Write a short bio"),
   location: z.string().trim(),
   contactEmail: z.string().trim().email("Enter a valid email address").or(z.literal("")),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^[+\d\s().-]{0,25}$/, "Use digits, spaces, + and - only"),
   avatarUrl: optionalUrl,
   resumeUrl: optionalUrl,
   socialLinks: z.array(
@@ -165,9 +207,52 @@ export const profileFormSchema = z.object({
   ),
 });
 
+export const educationFormSchema = z
+  .object({
+    institution: requiredText("Add the school or university"),
+    degree: requiredText("Add the degree or program"),
+    field: z.string().trim(),
+    grade: z.string().trim(),
+    location: z.string().trim(),
+    description: z.string().trim(),
+    startDate: z.string().min(1, "Add a start date"),
+    endDate: z.string(),
+    current: z.boolean(),
+    order: wholeNumber,
+  })
+  .superRefine((value, ctx) => {
+    if (!value.current && !value.endDate) {
+      ctx.addIssue({ code: "custom", path: ["endDate"], message: "Add an end date, or tick \"I study here now\"" });
+    }
+    if (!value.current && value.endDate && value.startDate && value.endDate < value.startDate) {
+      ctx.addIssue({ code: "custom", path: ["endDate"], message: "The end date can't be before the start date" });
+    }
+  });
+
+export const certificateFormSchema = z
+  .object({
+    title: requiredText("Add the certificate name"),
+    issuer: requiredText("Add who gave you the certificate"),
+    issueDate: z.string().min(1, "Add the issue date"),
+    expiryDate: z.string(),
+    noExpiry: z.boolean(),
+    credentialId: z.string().trim(),
+    credentialUrl: optionalUrl,
+    imageUrl: optionalUrl,
+    description: z.string().trim(),
+    order: wholeNumber,
+  })
+  .superRefine((value, ctx) => {
+    if (!value.noExpiry && value.expiryDate && value.issueDate && value.expiryDate < value.issueDate) {
+      ctx.addIssue({ code: "custom", path: ["expiryDate"], message: "The expiry date can't be before the issue date" });
+    }
+  });
+
 export type LoginValues = z.infer<typeof loginSchema>;
 export type ContactValues = z.infer<typeof contactSchema>;
 export type ProjectFormValues = z.infer<typeof projectFormSchema>;
 export type SkillFormValues = z.infer<typeof skillFormSchema>;
 export type ExperienceFormValues = z.infer<typeof experienceFormSchema>;
 export type ProfileFormValues = z.infer<typeof profileFormSchema>;
+export type EducationFormValues = z.infer<typeof educationFormSchema>;
+export type CertificateFormValues = z.infer<typeof certificateFormSchema>;

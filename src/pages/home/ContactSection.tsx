@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircle2, Mail } from "lucide-react";
+import { CheckCircle2, Mail, Phone } from "lucide-react";
 import { useSendMessage } from "@/api/messages";
 import { useProfile } from "@/api/profile";
 import { Button, Field, Input, Textarea } from "@/components/ui";
@@ -36,12 +36,20 @@ export default function ContactSection() {
       <div className="mx-auto grid max-w-6xl gap-12 px-5 md:grid-cols-[1fr_1.1fr]">
         <div>
           <SectionHeading title="Let's work together" description="Have a project, a job opening or a question? Send a message and I'll reply by email." />
-          {profile?.contactEmail && (
-            <a href={`mailto:${profile.contactEmail}`} className="inline-flex items-center gap-2 text-lg font-semibold underline underline-offset-4">
-              <Mail className="size-5" aria-hidden />
-              {profile.contactEmail}
-            </a>
-          )}
+          <div className="flex flex-col items-start gap-3">
+            {profile?.contactEmail && (
+              <a href={`mailto:${profile.contactEmail}`} className="inline-flex items-center gap-2 text-lg font-semibold underline underline-offset-4">
+                <Mail className="size-5" aria-hidden />
+                {profile.contactEmail}
+              </a>
+            )}
+            {profile?.phone && (
+              <a href={`tel:${profile.phone.replace(/[^\d+]/g, "")}`} className="inline-flex items-center gap-2 text-lg font-semibold underline underline-offset-4">
+                <Phone className="size-5" aria-hidden />
+                {profile.phone}
+              </a>
+            )}
+          </div>
         </div>
 
         {sent ? (

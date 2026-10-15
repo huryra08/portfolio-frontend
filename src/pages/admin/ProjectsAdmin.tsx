@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -22,6 +22,7 @@ const emptyForm: ProjectFormValues = {
   published: true,
   order: 0,
   skillIds: [],
+  challenges: [],
 };
 
 const toForm = (project: Project): ProjectFormValues => ({
@@ -37,6 +38,7 @@ const toForm = (project: Project): ProjectFormValues => ({
   published: project.published,
   order: project.order,
   skillIds: project.skills.map(({ skill }) => skill.id),
+  challenges: project.challenges.map(({ problem, solution }) => ({ problem, solution })),
 });
 
 const toPayload = (values: ProjectFormValues): ProjectPayload => ({
@@ -51,6 +53,7 @@ const toPayload = (values: ProjectFormValues): ProjectPayload => ({
   published: values.published,
   order: values.order,
   skillIds: values.skillIds,
+  challenges: values.challenges.map((item, index) => ({ problem: item.problem.trim(), solution: item.solution.trim(), order: index })),
   images: values.screenshots
     .split("\n")
     .map((line) => line.trim())
@@ -66,11 +69,13 @@ function ProjectForm({ project, onDone }: { project: Project | null; onDone: () 
 
   const {
     register,
+    control,
     handleSubmit,
     watch,
     setValue,
     formState: { errors, dirtyFields },
   } = useForm<ProjectFormValues>({ resolver: zodResolver(projectFormSchema), defaultValues: project ? toForm(project) : emptyForm });
+  const challenges = useFieldArray({ control, name: "challenges" });
 
   // while writing a NEW project, the slug follows the title until you edit it yourself
   const title = watch("title");
@@ -144,6 +149,35 @@ function ProjectForm({ project, onDone }: { project: Project | null; onDone: () 
           })}
         </div>
       </fieldset>
+
+      <div role="group" aria-labelledby="challenges-label" className="space-y-4">
+        <div className="flex items-center justify-between gap-3">
+          <p id="challenges-label" className="text-sm font-semibold">
+            Problems and how you fixed them
+          </p>
+          <Button type="button" variant="secondary" className="px-4 py-2" onClick={() => challenges.append({ problem: "", solution: "" })}>
+            <Plus className="size-4" aria-hidden />
+            Add problem
+          </Button>
+        </div>
+        {challenges.fields.length === 0 && <p className="text-sm text-mute">Share a bug or a hard moment and how you solved it. Visitors like seeing how you think.</p>}
+        {challenges.fields.map((field, index) => (
+          <div key={field.id} className="space-y-4 rounded-xl border border-line bg-white p-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-bold">Problem {index + 1}</span>
+              <Button type="button" variant="ghost" className="px-2 py-1 text-danger hover:bg-danger/10" aria-label={`Remove problem ${index + 1}`} onClick={() => challenges.remove(index)}>
+                <Trash2 className="size-4" aria-hidden />
+              </Button>
+            </div>
+            <Field label="What went wrong?" htmlFor={`ch-problem-${index}`} error={errors.challenges?.[index]?.problem?.message}>
+              <Textarea id={`ch-problem-${index}`} rows={3} invalid={!!errors.challenges?.[index]?.problem} {...register(`challenges.${index}.problem`)} />
+            </Field>
+            <Field label="How did you fix it?" htmlFor={`ch-solution-${index}`} error={errors.challenges?.[index]?.solution?.message}>
+              <Textarea id={`ch-solution-${index}`} rows={3} invalid={!!errors.challenges?.[index]?.solution} {...register(`challenges.${index}.solution`)} />
+            </Field>
+          </div>
+        ))}
+      </div>
 
       <div className="grid gap-5 sm:grid-cols-[1fr_140px]">
         <div className="space-y-4">

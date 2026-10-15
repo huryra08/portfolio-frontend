@@ -13,6 +13,7 @@ const toForm = (profile: Profile | null | undefined): ProfileFormValues => ({
   bio: profile?.bio ?? "",
   location: profile?.location ?? "",
   contactEmail: profile?.contactEmail ?? "",
+  phone: profile?.phone ?? "",
   avatarUrl: profile?.avatarUrl ?? "",
   resumeUrl: profile?.resumeUrl ?? "",
   socialLinks: profile?.socialLinks.map(({ platform, url }) => ({ platform, url })) ?? [],
@@ -36,6 +37,7 @@ function ProfileForm({ profile }: { profile: Profile | null }) {
         bio: values.bio.trim(),
         location: emptyToNull(values.location),
         contactEmail: emptyToNull(values.contactEmail),
+        phone: emptyToNull(values.phone),
         avatarUrl: emptyToNull(values.avatarUrl),
         resumeUrl: emptyToNull(values.resumeUrl),
         socialLinks: values.socialLinks.map((link, index) => ({ platform: link.platform.trim(), url: link.url.trim(), order: index })),
@@ -58,12 +60,15 @@ function ProfileForm({ profile }: { profile: Profile | null }) {
         <Field label="Bio" htmlFor="f-bio" error={errors.bio?.message} hint="Two or three sentences about what you build and what you're looking for.">
           <Textarea id="f-bio" rows={5} invalid={!!errors.bio} {...register("bio")} />
         </Field>
-        <div className="grid gap-5 sm:grid-cols-2">
+        <div className="grid gap-5 md:grid-cols-3">
           <Field label="Location" htmlFor="f-location">
             <Input id="f-location" placeholder="Dhaka, Bangladesh" {...register("location")} />
           </Field>
           <Field label="Contact email" htmlFor="f-email" error={errors.contactEmail?.message}>
             <Input id="f-email" type="email" invalid={!!errors.contactEmail} {...register("contactEmail")} />
+          </Field>
+          <Field label="Phone number" htmlFor="f-phone" error={errors.phone?.message} hint="Shown publicly on your site.">
+            <Input id="f-phone" type="tel" autoComplete="tel" placeholder="+880 1700 000000" invalid={!!errors.phone} {...register("phone")} />
           </Field>
         </div>
         <div className="grid gap-5 sm:grid-cols-2">

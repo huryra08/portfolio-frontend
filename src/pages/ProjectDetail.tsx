@@ -72,6 +72,28 @@ export default function ProjectDetail() {
 
           <p className="mt-10 max-w-2xl whitespace-pre-line text-lg leading-relaxed">{project.description}</p>
 
+          {project.challenges.length > 0 && (
+            <section className="mt-14" aria-labelledby="challenges-heading">
+              <h2 id="challenges-heading" className="text-3xl font-extrabold">
+                Problems I ran into and how I fixed them
+              </h2>
+              <ol className="mt-6 divide-y divide-line border-y border-line">
+                {project.challenges.map((item, index) => (
+                  <li key={item.id} className="grid gap-5 py-7 md:grid-cols-2 md:gap-10">
+                    <div>
+                      <p className="font-bold text-danger">Problem {index + 1}</p>
+                      <p className="mt-2 whitespace-pre-line leading-relaxed">{item.problem}</p>
+                    </div>
+                    <div>
+                      <p className="font-bold text-teal">How I fixed it</p>
+                      <p className="mt-2 whitespace-pre-line leading-relaxed">{item.solution}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
+
           {project.images.length > 0 && (
             <div className="mt-12 grid gap-5 sm:grid-cols-2">
               {project.images.map((image) => (

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowDown, ExternalLink, FileText, MapPin } from "lucide-react";
+import { ArrowDown, ExternalLink, FileText, MapPin, Phone } from "lucide-react";
 import { useProfile } from "@/api/profile";
 import { initials } from "@/lib/utils";
 import { ErrorState, Skeleton } from "@/components/ui";
@@ -44,11 +44,21 @@ export default function Hero() {
         <p className="mt-6 font-display text-2xl font-bold text-ink/80 sm:text-3xl">{profile.headline}</p>
         <p className="mt-6 max-w-xl whitespace-pre-line text-lg leading-relaxed text-mute">{profile.bio}</p>
 
-        {profile.location && (
-          <p className="mt-6 flex items-center gap-2 text-mute">
-            <MapPin className="size-4" aria-hidden />
-            {profile.location}
-          </p>
+        {(profile.location || profile.phone) && (
+          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-mute">
+            {profile.location && (
+              <p className="flex items-center gap-2">
+                <MapPin className="size-4" aria-hidden />
+                {profile.location}
+              </p>
+            )}
+            {profile.phone && (
+              <a href={`tel:${profile.phone.replace(/[^\d+]/g, "")}`} className="flex items-center gap-2 hover:text-ink">
+                <Phone className="size-4" aria-hidden />
+                {profile.phone}
+              </a>
+            )}
+          </div>
         )}
 
         <div className="mt-9 flex flex-wrap items-center gap-3">

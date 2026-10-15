@@ -6,6 +6,8 @@ import Hero from "./home/Hero";
 import ProjectsSection from "./home/ProjectsSection";
 import SkillsSection from "./home/SkillsSection";
 import ExperienceSection from "./home/ExperienceSection";
+import EducationSection from "./home/EducationSection";
+import CertificatesSection from "./home/CertificatesSection";
 import ContactSection from "./home/ContactSection";
 
 export default function Home() {
@@ -24,6 +26,8 @@ export default function Home() {
       <ProjectsSection />
       <SkillsSection />
       <ExperienceSection />
+      <EducationSection />
+      <CertificatesSection />
       <ContactSection />
     </>
   );

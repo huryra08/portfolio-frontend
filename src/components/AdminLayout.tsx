@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Briefcase, ExternalLink, FolderKanban, Inbox, LayoutDashboard, LogOut, Menu, UserRound, Wrench, X } from "lucide-react";
+import { Award, Briefcase, ExternalLink, FolderKanban, GraduationCap, Inbox, LayoutDashboard, LogOut, Menu, UserRound, Wrench, X } from "lucide-react";
 import { toast } from "sonner";
 import { useLogout, useMe } from "@/api/auth";
 import { useMessages } from "@/api/messages";
@@ -11,6 +11,8 @@ const nav = [
   { to: "/admin/projects", label: "Projects", icon: FolderKanban },
   { to: "/admin/skills", label: "Skills", icon: Wrench },
   { to: "/admin/experience", label: "Experience", icon: Briefcase },
+  { to: "/admin/education", label: "Education", icon: GraduationCap },
+  { to: "/admin/certificates", label: "Certificates", icon: Award },
   { to: "/admin/profile", label: "Profile", icon: UserRound },
   { to: "/admin/messages", label: "Messages", icon: Inbox },
 ];

@@ -16,6 +16,7 @@ export type ProjectPayload = {
   order: number;
   images: { url: string; order: number }[];
   skillIds: string[];
+  challenges: { problem: string; solution: string; order: number }[];
 };
 
 const projectsSchema = z.array(projectSchema);

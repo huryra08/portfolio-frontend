@@ -3,6 +3,8 @@ import { ArrowRight, Check, Circle } from "lucide-react";
 import { useAdminProjects } from "@/api/projects";
 import { useSkills } from "@/api/skills";
 import { useExperience } from "@/api/experience";
+import { useEducation } from "@/api/education";
+import { useCertificates } from "@/api/certificates";
 import { useProfile } from "@/api/profile";
 import { useMessages } from "@/api/messages";
 import { useMe } from "@/api/auth";
@@ -16,9 +18,11 @@ export default function Dashboard() {
   const projects = useAdminProjects();
   const skills = useSkills();
   const experience = useExperience();
+  const education = useEducation();
+  const certificates = useCertificates();
   const messages = useMessages();
 
-  const loading = [profile, projects, skills, experience, messages].some((query) => query.isPending);
+  const loading = [profile, projects, skills, experience, education, certificates, messages].some((query) => query.isPending);
   const unread = messages.data?.filter((message) => !message.isRead).length ?? 0;
   const published = projects.data?.filter((project) => project.published).length ?? 0;
 
@@ -26,6 +30,8 @@ export default function Dashboard() {
     { label: "Published projects", value: published, to: "/admin/projects" },
     { label: "Skills", value: skills.data?.length ?? 0, to: "/admin/skills" },
     { label: "Jobs listed", value: experience.data?.length ?? 0, to: "/admin/experience" },
+    { label: "Education entries", value: education.data?.length ?? 0, to: "/admin/education" },
+    { label: "Certificates", value: certificates.data?.length ?? 0, to: "/admin/certificates" },
     { label: "Unread messages", value: unread, to: "/admin/messages" },
   ];
 
@@ -34,6 +40,8 @@ export default function Dashboard() {
     { done: (skills.data?.length ?? 0) > 0, label: "Add your skills", text: "Group them by category, like Frontend or Backend.", to: "/admin/skills" },
     { done: published > 0, label: "Publish your first project", text: "Add a link, a short summary and the skills you used.", to: "/admin/projects" },
     { done: (experience.data?.length ?? 0) > 0, label: "Add your experience", text: "Jobs, internships or courses, newest first.", to: "/admin/experience" },
+    { done: (education.data?.length ?? 0) > 0, label: "Add your education", text: "Your school, university or program.", to: "/admin/education" },
+    { done: (certificates.data?.length ?? 0) > 0, label: "Add a certificate", text: "Courses you completed, with a link to verify them.", to: "/admin/certificates" },
   ];
   const remaining = steps.filter((step) => !step.done);
 
@@ -41,7 +49,7 @@ export default function Dashboard() {
     <>
       <PageHeader title={`Hi ${me?.name ?? "there"}`} description="Here's how your portfolio looks right now." />
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
         {stats.map((stat) => (
           <Link key={stat.label} to={stat.to} className="rounded-2xl border border-line bg-white p-5 transition-colors hover:border-ink">
             {loading ? <Skeleton className="h-10 w-12" /> : <p className="font-display text-4xl font-extrabold">{stat.value}</p>}

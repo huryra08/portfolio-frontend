@@ -8,6 +8,7 @@ export type ProfilePayload = {
   bio: string;
   location: string | null;
   contactEmail: string | null;
+  phone: string | null;
   avatarUrl: string | null;
   resumeUrl: string | null;
   socialLinks: { platform: string; url: string; order: number }[];

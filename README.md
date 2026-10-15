@@ -7,12 +7,12 @@ Works with the Portfulio API (the backend in `portfulio-backend.zip`).
 
 ```bash
 npm install
-cp .env.example .env     # VITE_API_URL=http://localhost:5000/api
 npm run dev              # http://localhost:3000
 ```
 
-Backend `.env` must have `APP_URL=http://localhost:3000` (it is the default in `.env.example`).
-The login cookie is sent with `credentials: "include"`, so CORS has to allow that exact origin.
+The frontend calls the API at `/api`. During local development, Vite proxies these requests to `http://localhost:5000` by default; set `API_PROXY_TARGET` in `.env.development.local` if your local backend runs on a different host.
+
+In production, `vercel.json` rewrites `/api/*` to `https://portfolio-backend-six-psi.vercel.app/api/*`. This keeps browser requests on the frontend origin and avoids cross-origin cookie/CORS restrictions. Update that rewrite if you change the backend URL.
 
 Open `http://localhost:3000/admin` and log in with the admin you created using `npm run seed` in the backend.
 Start with the setup checklist on the Overview page: profile, skills, first project, experience.
@@ -51,4 +51,7 @@ src/
 
 ```bash
 npm run build     # type-checks, then builds to dist/
+npm run start     # serves the production build locally
 ```
+
+Run `npm run build` before `npm run start`. For development with hot reload, use `npm run dev`.
